@@ -9,7 +9,7 @@ app.register_blueprint(Sponge_Flask_Obj)
 
 SetDebugLevel(0)
 print('hello')
-debug(6, 'loading database')
+debug(6, 'loading database...')
 # init the global database structure
 dbdata = DBData(biomfile='data/emp.100.biom', mapfile='data/emp.map.txt', filepath=app.root_path)
 dbdata.import_data()
