@@ -1,4 +1,5 @@
 from collections import defaultdict
+import os.path
 
 import pandas as pd
 import numpy as np
@@ -9,7 +10,7 @@ from utils import debug
 
 
 class DBData:
-    def __init__(self, biomfile='data/final.withtax.biom', mapfile='data/map.txt'):
+    def __init__(self, biomfile='data/final.withtax.biom', mapfile='data/map.txt', filepath=''):
         '''The database class used for data access
 
         Parameters
@@ -18,7 +19,12 @@ class DBData:
             Name of the biom table
         mapfile : str
             Name of the mapping file
+        filepath : str (optional)
+            The path to the application
         '''
+        print(biomfile)
+        biomfile = os.path.join(filepath, biomfile)
+        mapfile = os.path.join(filepath, mapfile)
         self._biom_file_name = biomfile
         self._map_file_name = mapfile
 
@@ -28,6 +34,7 @@ class DBData:
         '''
         debug(5, 'Loading biom table %s' % self._biom_file_name)
         table = biom.load_table(self._biom_file_name)
+        table.norm(axis='sample', inplace=True)
         self.data = scipy.sparse.csr_matrix(table.matrix_data)
 
         self.sids = table.ids(axis='sample')
@@ -37,7 +44,10 @@ class DBData:
         s_metadata.fillna('na', inplace=True)
         s_metadata.set_index(s_metadata.columns[0], drop=False, inplace=True)
         s_metadata.index = s_metadata.index.astype(np.str)
-        self.sample_metadata = s_metadata.loc[self.sids, ]
+        common_samples_pos = [cpos for cpos in range(len(self.sids)) if self.sids[cpos] in s_metadata.index]
+        common_samples = [self.sids[cpos] for cpos in common_samples_pos]
+        self.data = self.data[:, common_samples_pos]
+        self.sample_metadata = s_metadata.loc[common_samples, ]
 
         f_metadata = table.metadata(axis='observation')
 
@@ -135,7 +145,7 @@ class DBData:
         num_samples = np.sum(self.sample_metadata[field] == value)
         return num_samples
 
-    def get_info(self, sequence, field, threshold=0):
+    def get_info(self, sequence, field, threshold=0, mincounts=4):
         '''Get the total samples, observed samples per value in field
 
         Note, values for which the sequence does not appear (i.e. observed samples=0) are not returned
@@ -148,6 +158,8 @@ class DBData:
             the name of the field to get the values for
         threhold : float (optional)
             the minimal frequency for the sequence to be present in the sample in order to call it observed (using > threshold)
+        mincounts : int (optional)
+            the minimal number of counts for a field/value in order to be returned
 
         Returns
         -------
@@ -172,6 +184,8 @@ class DBData:
 
         info = {}
         for cvalue, ccount in counts.items():
+            if ccount < mincounts:
+                continue
             cinfo = {}
             cinfo['observed_samples'] = int(ccount)
             cinfo['total_samples'] = int(self.get_value_samples(field, cvalue))

@@ -11,7 +11,7 @@ SetDebugLevel(0)
 print('hello')
 debug(6, 'loading database')
 # init the global database structure
-dbdata = DBData()
+dbdata = DBData(biomfile='data/emp.100.biom', mapfile='data/emp.map.txt', filepath=app.root_path)
 dbdata.import_data()
 debug(6, 'starting server')
 
@@ -31,4 +31,5 @@ def teardown_request(exception):
 
 
 if __name__ == '__main__':
+    print('pita')
     app.run(debug=True)
