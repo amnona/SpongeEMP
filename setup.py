@@ -39,6 +39,16 @@ setup(name='spongeworld',
       url='na',
       test_suite='nose.collector',
       packages=find_packages(),
+      package_data={'spongeworld': ['spongeworld/data/*']},
+      install_requires=[
+          'click >= 6',
+          'scikit-bio >= 0.4.0',
+          'numpy >= 1.11.0',
+          'h5py >= 2.6',
+          'flask >= 0.12',
+          'pandas >= 0.19',
+          'biom-format >= 2.1'
+      ],
       extras_require={'test': ["nose", "pep8", "flake8"],
                       'coverage': ["coverage"],
                       'doc': ["Sphinx >= 1.4"]}
