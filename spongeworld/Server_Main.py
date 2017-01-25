@@ -11,7 +11,7 @@ SetDebugLevel(0)
 print('hello')
 debug(6, 'loading database...')
 # init the global database structure
-dbdata = DBData(biomfile='data/emp.100.biom', mapfile='data/emp.map.txt', filepath=app.root_path)
+dbdata = DBData(biomfile='data/final.withtax.biom', mapfile='data/map.txt', filepath=app.root_path)
 dbdata.import_data()
 debug(6, 'starting server')
 
@@ -19,6 +19,8 @@ debug(6, 'starting server')
 # whenever a new request arrives, connect to the database and store in g.db
 @app.before_request
 def before_request():
+    print('paka')
+    debug(6, 'pooka')
     global dbdata
 
     g.db = dbdata
