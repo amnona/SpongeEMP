@@ -1,7 +1,5 @@
 from unittest import main, TestCase
 
-import numpy as np
-
 from database import DBData
 from spongeworld import get_sequence_info
 from utils import get_data_path
