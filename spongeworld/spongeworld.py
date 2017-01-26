@@ -1,5 +1,4 @@
 from flask import Blueprint, request, g
-from collections import defaultdict
 import json
 from .utils import debug, getdoc
 from .autodoc import auto
