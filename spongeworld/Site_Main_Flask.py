@@ -1,7 +1,10 @@
-from flask import Blueprint, request, render_template, redirect, g
+from io import TextIOWrapper
 import operator
+
+from flask import Blueprint, request, render_template, redirect, g
+
 import scipy.stats
-from .utils import debug
+from .utils import debug, get_fasta_seqs
 from .spongeworld import get_sequence_info
 
 Site_Main_Flask_Obj = Blueprint('Site_Main_Flask_Obj', __name__, template_folder='templates')
@@ -41,6 +44,20 @@ def search_results():
     else:
         sequence = request.form['sequence']
 
+    # if there is no sequence but a file attached, process the fasta file
+    if sequence == '':
+        if 'fasta file' in request.files:
+            debug(1, 'Fasta file uploaded, processing it')
+            file = request.files['fasta file']
+            textfile = TextIOWrapper(file)
+            seqs = get_fasta_seqs(textfile)
+            if seqs is None:
+                return('Error: Uploaded file not recognized as fasta', 400)
+            err, webpage = get_sequence_annotations(db, seqs, relpath='')
+            if err:
+                return err, 400
+            return webpage
+
     # if it is short, try if it is taxonomy
         # err, webPage = get_taxonomy_info(sequence, relpath='')
         # if not err:
@@ -55,9 +72,6 @@ def search_results():
 
 @Site_Main_Flask_Obj.route('/sequence_annotations/<string:sequence>')
 def get_sequence_annotations(db, sequence, relpath='../'):
-    sequence = sequence.upper()
-    rdata = {}
-    rdata['sequence'] = sequence
     err, info = get_sequence_info(db, sequence, fields=None, threshold=0)
     if err:
         return err, ''

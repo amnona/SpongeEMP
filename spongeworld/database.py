@@ -145,7 +145,7 @@ class DBData:
         num_samples = np.sum(self.sample_metadata[field] == value)
         return num_samples
 
-    def get_info(self, sequence, field, threshold=0, mincounts=4):
+    def get_info(self, sequence, field, threshold=0):
         '''Get the total samples, observed samples per value in field
 
         Note, values for which the sequence does not appear (i.e. observed samples=0) are not returned
@@ -158,8 +158,6 @@ class DBData:
             the name of the field to get the values for
         threhold : float (optional)
             the minimal frequency for the sequence to be present in the sample in order to call it observed (using > threshold)
-        mincounts : int (optional)
-            the minimal number of counts for a field/value in order to be returned
 
         Returns
         -------
@@ -184,8 +182,6 @@ class DBData:
 
         info = {}
         for cvalue, ccount in counts.items():
-            if ccount < mincounts:
-                continue
             cinfo = {}
             cinfo['observed_samples'] = int(ccount)
             cinfo['total_samples'] = int(self.get_value_samples(field, cvalue))

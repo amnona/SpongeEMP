@@ -13,7 +13,7 @@ app.register_blueprint(Site_Main_Flask_Obj)
 # init the autodoc module
 auto.init_app(app)
 
-SetDebugLevel(0)
+SetDebugLevel(2)
 
 # init the global database structure
 debug(6, 'loading database...')
@@ -25,8 +25,6 @@ debug(6, 'starting server')
 # whenever a new request arrives, connect to the database and store in g.db
 @app.before_request
 def before_request():
-    print('paka')
-    debug(6, 'pooka')
     global dbdata
 
     g.db = dbdata

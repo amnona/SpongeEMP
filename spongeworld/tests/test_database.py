@@ -83,16 +83,9 @@ class DatabaseTests(TestCase):
         self.assertEqual(info['2']['observed_samples'], 4)
 
         # test threshold
-        info = db.get_info(self.badseq, 'group', threshold=10 / 2500, mincounts=0)
+        info = db.get_info(self.badseq, 'group', threshold=10 / 2500)
         self.assertEqual(info['2']['total_samples'], 9)
         self.assertEqual(info['2']['observed_samples'], 3)
-
-        # and test mincounts
-        info = db.get_info(self.badseq, 'group', threshold=10 / 2500, mincounts=3)
-        self.assertEqual(info['2']['total_samples'], 9)
-        self.assertEqual(info['2']['observed_samples'], 3)
-        info = db.get_info(self.badseq, 'group', threshold=10 / 2500, mincounts=4)
-        self.assertTrue('2' not in info)
 
 if __name__ == '__main__':
     main()

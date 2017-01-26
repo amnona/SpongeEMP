@@ -3,6 +3,9 @@ import inspect
 import os.path
 
 
+debuglevel = 2
+
+
 def debug(level, msg):
     """
     print a debug message
@@ -14,8 +17,7 @@ def debug(level, msg):
     """
     global debuglevel
 
-    # if level>=debuglevel:
-    if True:
+    if level >= debuglevel:
         print(msg, file=sys.stderr)
 
 
@@ -70,3 +72,49 @@ def get_data_path(fn, subfolder='data'):
     path = os.path.dirname(os.path.abspath(callers_filename))
     data_path = os.path.join(path, subfolder, fn)
     return data_path
+
+
+def get_fasta_seqs(file):
+    '''Get sequences from a fasta file
+
+    Parameters
+    ----------
+    file : file or str
+        the text fasta file to process.
+        If str, it is the name of the file. If file, it is the io stream
+        NOTE: file is closed after the read
+    Returns
+    -------
+    seqs : list of str sequences (ACGT)
+        the sequences in the fasta file
+    '''
+    debug(1, 'reading fasta file')
+    if isinstance(file, str):
+        debug(1, 'opening file %s' % file)
+        file = open(file)
+
+    seqs = []
+    cseq = ''
+    isfasta = False
+    for cline in file:
+        cline = cline.strip()
+        if cline[0] == '>':
+            isfasta = True
+            if cseq:
+                seqs.append(cseq)
+            cseq = ''
+        else:
+            cseq += cline
+    # process the last sequence
+    if cseq:
+        seqs.append(cseq)
+
+    file.close()
+
+    # test if we encountered '>'
+    if not isfasta:
+        debug(2, 'not a fasta file')
+        return None
+
+    debug(1, 'read %d sequences' % len(seqs))
+    return seqs
