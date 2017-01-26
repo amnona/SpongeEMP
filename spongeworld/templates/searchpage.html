@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <style>
+            #main{    
+            }
+            #menu {
+            width: 20%;
+            height: 100px;
+            margin: 0;
+            float:left;
+            overflow:auto;
+            display: inline-block;
+            }
+            #searchtitle {
+            width: 60%;
+            height: 100px;
+            /*margin-left: auto; margin-right: auto;*/
+            margin: 0px;
+            clear: both;
+            overflow:auto;
+            display: inline-block;
+            }
+            #statisticstitle {
+            width: 15%;
+            height: 100px;
+            margin: 0;
+            float:right;
+            overflow:auto;
+            display: inline-block;
+            }
+            #statistics {
+            width: 5%;
+            height: 100px;
+            margin: 0;
+            float:right;
+            overflow:auto;
+            display: inline-block;
+            }
+            #searchform {
+            width: 100%;
+            height: 400px;
+            margin: 0;
+            clear: both;
+            overflow:auto;
+            }
+            #botMenu {
+            width: 100%;
+            height: 100px;
+            margin: 0;
+            clear: both;
+            overflow:auto;
+            }
+            #searchBut {
+            height: 40px; 
+            width: 140px; 
+            font-size:20px;
+            text-align: center;
+            }
+        </style>
+    </head> 
+    <body>
+        <div id="main">
+            <div id="searchtitle">
+                <center><img src='static/dbBact.png'></center>
+            </div>
+            <div id="searchform">
+                <center><h2>Sequence/Taxonomy Search</h2></center>
+                <center>Enter amplicon sequence or partial taxonomy to search for</center>
+                <form action='search_results' method='post' enctype = "multipart/form-data">
+                    <input value='' style='width: 100%; font-size:20px; height: 30px; margin-bottom: 20px;' type='text' name='sequence'><br>
+                    <center>
+                    <input id='searchBut' type='submit' align='center'></center>
+                </form>
+            </div>
+            <div id="botMenu">
+            <center><a href='search_results?sequence=tacggagggtgcgagcgttaatcggaataactgggcgtaaagggcacgcaggcggtgacttaagtgaggtgtgaaagccccgggcttaacctgggaattgcatttcatactgggtcgctagagtactttagggaggggtagaattccacg'>Or click here for example</a>
+            </center>
+            </div>
+        </div>
+    </body>
+</html>

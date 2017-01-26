@@ -1,11 +1,13 @@
 from flask import Flask, g
 from spongeworld import Sponge_Flask_Obj
+from Site_Main_Flask import Site_Main_Flask_Obj
 from database import DBData
 
 from utils import debug, SetDebugLevel
 
 app = Flask(__name__)
 app.register_blueprint(Sponge_Flask_Obj)
+app.register_blueprint(Site_Main_Flask_Obj)
 
 SetDebugLevel(0)
 print('hello')
