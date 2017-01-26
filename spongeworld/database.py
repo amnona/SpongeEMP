@@ -114,8 +114,8 @@ class DBData:
 
         Parameters
         ----------
-        sequence : str (ACGT sequence)
-            the sequence to look for
+        sequence : str
+            the DNA sequence to look for
         threhold : float (optional)
             the minimal frequency for the sequence to be present in the sample in order to call it observed (using > threshold)
         '''
@@ -145,19 +145,21 @@ class DBData:
         num_samples = np.sum(self.sample_metadata[field] == value)
         return num_samples
 
-    def get_info(self, sequence, field, threshold=0):
+    def get_info(self, sequence, field, threshold=0, mincounts=4):
         '''Get the total samples, observed samples per value in field
 
         Note, values for which the sequence does not appear (i.e. observed samples=0) are not returned
 
         Parameters
         ----------
-        sequence : str (ACGT sequence)
-            the sequence to look for
+        sequence : str or list of str
+            the DNA sequences to look for
         field : str
             the name of the field to get the values for
         threhold : float (optional)
             the minimal frequency for the sequence to be present in the sample in order to call it observed (using > threshold)
+        mincounts : int (optional)
+            the minimal total number of counts for a field/value in order to be returned
 
         Returns
         -------
@@ -170,21 +172,29 @@ class DBData:
                 'observed_samples': int
                     the number of samples with this value which have the sequence present in them
         '''
-        pos = self.get_seq_pos(sequence)
-        if pos is None:
-            return None
-        present = self.data[pos, :] > threshold
-        present_pos = present.nonzero()[1]
+        if isinstance(sequence, str):
+            sequence = [sequence]
+
+        allsum = np.zeros(self.data.shape[1])
+        for csequence in sequence:
+            pos = self.get_seq_pos(csequence)
+            if pos is None:
+                continue
+            present = self.data[pos, :] > threshold
+            allsum[present.nonzero()[1]] += 1
+
+        present_pos = allsum.nonzero()[0]
         counts = defaultdict(int)
         for cpos in present_pos:
             cvalue = self.sample_metadata[field].iloc[cpos]
-            counts[cvalue] += 1
+            counts[cvalue] += allsum[cpos]
 
         info = {}
         for cvalue, ccount in counts.items():
+            if ccount < mincounts:
+                continue
             cinfo = {}
             cinfo['observed_samples'] = int(ccount)
-            cinfo['total_samples'] = int(self.get_value_samples(field, cvalue))
+            cinfo['total_samples'] = int(self.get_value_samples(field, cvalue)) * len(sequence)
             info[str(cvalue)] = cinfo
-
         return info

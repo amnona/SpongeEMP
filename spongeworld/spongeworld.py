@@ -104,59 +104,30 @@ def get_sequence_info(db, sequence, fields=None, threshold=0, mincounts=4):
     if isinstance(sequence, str):
         sequence = [sequence]
 
-    total_samples = 0
     total_observed = 0
-    seqs_processed = 0
-    total_field_val_samples = defaultdict(dict)
-    res = {}
-    res['info'] = defaultdict(dict)
+    newseqs = []
     for csequence in sequence:
         # trim and upper case the sequence
         if len(csequence) < db.seq_length:
             continue
-        seqs_processed += 1
         csequence = csequence[:db.seq_length].upper()
-        total_samples += db.get_total_samples()
         total_observed += db.get_total_observed(csequence, threshold=threshold)
-        for cfield in fields:
-            debug(1, 'processing field %s' % cfield)
-            cinfo = db.get_info(csequence, field=cfield, threshold=threshold)
-            for cval, cvalinfo in cinfo.items():
-                if cval not in res['info'][cfield]:
-                    res['info'][cfield][cval] = {'total_samples': 0, 'observed_samples': 0}
-                total_field_val_samples[cfield][cval] = cvalinfo['total_samples']
-                # res['info'][cfield][cval]['total_samples'] += cvalinfo['total_samples']
-                res['info'][cfield][cval]['observed_samples'] += cvalinfo['observed_samples']
+        newseqs.append(csequence)
 
-    # remove field/values with < minreads
-    # and add the total number of samples tested in the field
-    field_del_list = []
-    for cfield, cinfo in res['info'].items():
-        del_list = []
-        for cval, cvalinfo in cinfo.items():
-            if cvalinfo['observed_samples'] < mincounts:
-                del_list.append(cval)
-            else:
-                print(cfield)
-                print(cval)
-                print(res['info'][cfield][cval]['total_samples'])
-                print(total_field_val_samples[cfield])
-                print(total_field_val_samples[cfield][cval])
-                res['info'][cfield][cval]['total_samples'] = seqs_processed * total_field_val_samples[cfield][cval]
-        # delete the values that don't have enough entries
-        for cdel in del_list:
-            del res['info'][cfield][cdel]
-        if len(res['info'][cfield]) == 0:
-            field_del_list.append(cfield)
-    # and delete the fields with no values in them anymore
-    # for cdel in field_del_list:
-    #     del res['info'][cdel]
-
-    res['total_samples'] = total_samples
-    res['total_observed'] = total_observed
-    if seqs_processed == 0:
+    if len(newseqs) == 0:
         debug(3, 'No sequences processed')
         return 'All sequences too short. minimal length is %d' % db.seq_length, None
+
+    total_samples = db.get_total_samples() * len(newseqs)
+    res = {}
+    res['total_samples'] = total_samples
+    res['total_observed'] = total_observed
+    res['info'] = {}
+    for cfield in fields:
+        debug(1, 'processing field %s' % cfield)
+        cinfo = db.get_info(newseqs, field=cfield, threshold=threshold, mincounts=mincounts)
+        res['info'][cfield] = cinfo
+
     return '', res
 
 
