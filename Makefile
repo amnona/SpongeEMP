@@ -1,9 +1,9 @@
 .DEFAULT_GOAL := help
 
 ifeq ($(WITH_COVERAGE), TRUE)
-	TEST_COMMAND = COVERAGE_FILE=.coverage coverage run --rcfile .coveragerc setup.py nosetests --with-doctest
+	TEST_COMMAND = COVERAGE_FILE=.coverage coverage run --rcfile .coveragerc setup.py nosetests
 else
-	TEST_COMMAND = nosetests --with-doctest
+	TEST_COMMAND = nosetests
 endif
 
 help:
@@ -18,4 +18,4 @@ pep8:
 html:
 	make -C doc clean html
 
-all: test pep8 html
+all: test pep8
