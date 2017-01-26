@@ -42,7 +42,6 @@ setup(name='spongeworld',
       package_data={'spongeworld': ['spongeworld/data/*']},
       install_requires=[
           'click >= 6',
-          'scikit-bio >= 0.4.0',
           'numpy >= 1.11.0',
           'h5py >= 2.6',
           'flask >= 0.12',
