@@ -7,13 +7,13 @@ from spongeworld import get_sequence_info
 Site_Main_Flask_Obj = Blueprint('Site_Main_Flask_Obj', __name__, template_folder='templates')
 
 
-# @Site_Main_Flask_Obj.route('/', methods=['POST', 'GET'])
-# def landing_page():
-#     '''
-#     Redirect to the main search page
-#     '''
-#     # TODO: fix to non hard-coded
-#     return redirect('main')
+@Site_Main_Flask_Obj.route('/', methods=['POST', 'GET'])
+def landing_page():
+    '''
+    Redirect to the main search page
+    '''
+    # TODO: fix to non hard-coded
+    return redirect('main')
 
 
 @Site_Main_Flask_Obj.route('/main', methods=['POST', 'GET'])
