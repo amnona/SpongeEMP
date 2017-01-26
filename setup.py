@@ -46,7 +46,8 @@ setup(name='spongeworld',
           'h5py >= 2.6',
           'flask >= 0.12',
           'pandas >= 0.19',
-          'biom-format >= 2.1'
+          'biom-format >= 2.1',
+          'flask-autodoc'
       ],
       extras_require={'test': ["nose", "pep8", "flake8"],
                       'coverage': ["coverage"],
