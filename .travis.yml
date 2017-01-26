@@ -3,7 +3,7 @@ sudo: false
 language: python
 os:
   - linux
-  - osx
+  # - osx
 env:
   - PYVERSION="3.5"
 before_install:
