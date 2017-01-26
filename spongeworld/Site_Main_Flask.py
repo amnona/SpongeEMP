@@ -72,11 +72,16 @@ def search_results():
 
 @Site_Main_Flask_Obj.route('/sequence_annotations/<string:sequence>')
 def get_sequence_annotations(db, sequence, relpath='../'):
+    '''Get annotations for a DNA sequence
+    '''
     err, info = get_sequence_info(db, sequence, fields=None, threshold=0)
     if err:
         return err, ''
     desc = get_annotation_string(info)
     webPage = render_template('seqinfo.html', sequence=sequence)
+    if isinstance(sequence, str):
+        webPage += 'Taxonomy: %s <br>' % db.get_taxonomy(sequence)
+    webPage += '<br>'
     for cdesc in desc:
         webPage += cdesc + '<br>'
     webPage += "</body>"

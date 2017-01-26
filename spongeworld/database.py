@@ -90,6 +90,32 @@ class DBData:
         num_samples = self.data.shape[1]
         return int(num_samples)
 
+    def get_taxonomy(self, sequence):
+        '''Get the taxonomy for a given sequence
+
+        Parameters
+        ----------
+        sequence : str
+            The DNA sequence to get the taxonomy for
+
+        Returns
+        -------
+        tax : str
+            the taxonomy string (if exists) or 'na'
+        '''
+        if len(sequence) < self.seq_length:
+            return('na')
+            debug(2, 'sequence too short for taxonomy')
+        sequence = sequence[:self.seq_length].upper()
+        if 'taxonomy' not in self.feature_metadata:
+            debug(2, 'taxonomy not in biom table')
+            return('na')
+        if sequence not in self.feature_metadata.index:
+            debug(2, 'sequence not in biom table')
+            return('na')
+        tax = self.feature_metadata['taxonomy'][sequence]
+        return tax
+
     def get_seq_pos(self, sequence):
         '''Get the row of a sequence in the database
 

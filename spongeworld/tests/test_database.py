@@ -50,6 +50,14 @@ class DatabaseTests(TestCase):
         self.assertEqual(self.badseq, db.feature_metadata.index[db.get_seq_pos(self.badseq)])
         self.assertEqual(self.goodseq, db.feature_metadata.index[db.get_seq_pos(self.goodseq)])
 
+    def test_get_taxonomy(self):
+        db = self.db
+        db.import_data()
+
+        self.assertTrue('s__paradoxus' in db.get_taxonomy(self.goodseq))
+        self.assertTrue('Capnocytophaga' in db.get_taxonomy(self.badseq))
+        self.assertEqual(db.get_taxonomy('AAA'), 'na')
+
     def test_get_total_observed(self):
         db = self.db
         db.import_data()
