@@ -1,0 +1,18 @@
+# this file is based on the examples provided on scikit-bio's .coveragerc
+
+[run]
+omit =
+    */tests*
+    */__init__.py
+source = spongeworld
+branch = True
+include = */spongeworld/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:
+omit =
+    */tests*
+    */__init__.py
