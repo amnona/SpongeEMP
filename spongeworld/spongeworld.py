@@ -1,12 +1,13 @@
 from flask import Blueprint, request, g
 import json
 from .utils import debug, getdoc
-
+from .autodoc import auto
 
 Sponge_Flask_Obj = Blueprint('Sponge_Flask_Obj', __name__, template_folder='templates')
 
 
 @Sponge_Flask_Obj.route('/sequence/info', methods=['GET'])
+@auto.doc()
 def sequence_info():
     '''
     Title: Get sequence information
@@ -110,3 +111,8 @@ def get_sequence_info(db, sequence, fields=None, threshold=0):
         cinfo = db.get_info(sequence, field=cfield, threshold=threshold)
         res['info'][cfield] = cinfo
     return '', res
+
+
+@Sponge_Flask_Obj.route('/docs')
+def documentation():
+    return auto.html()
