@@ -1,8 +1,8 @@
 from unittest import main, TestCase
 
-from database import DBData
-from spongeworld import get_sequence_info
-from utils import get_data_path
+from spongeworld.database import DBData
+from spongeworld.spongeworld import get_sequence_info
+from spongeworld.utils import get_data_path
 
 
 class SpongeworldTests(TestCase):

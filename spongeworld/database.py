@@ -6,7 +6,7 @@ import numpy as np
 import scipy.sparse
 import biom
 
-from utils import debug
+from .utils import debug
 
 
 class DBData:

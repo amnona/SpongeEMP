@@ -1,8 +1,8 @@
 from flask import Blueprint, request, render_template, redirect, g
 import operator
 import scipy.stats
-from utils import debug
-from spongeworld import get_sequence_info
+from .utils import debug
+from .spongeworld import get_sequence_info
 
 Site_Main_Flask_Obj = Blueprint('Site_Main_Flask_Obj', __name__, template_folder='templates')
 

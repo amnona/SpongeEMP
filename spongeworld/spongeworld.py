@@ -1,6 +1,6 @@
 from flask import Blueprint, request, g
 import json
-from utils import debug, getdoc
+from .utils import debug, getdoc
 
 
 Sponge_Flask_Obj = Blueprint('Sponge_Flask_Obj', __name__, template_folder='templates')
