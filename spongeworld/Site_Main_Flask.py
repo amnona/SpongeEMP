@@ -115,7 +115,7 @@ def get_annotation_string(info, pval=0.1):
     '''
     keep = []
     total_observed = info['total_observed']
-    if total_observed is None:
+    if total_observed == 0:
         debug(2, 'sequence %s not found in database')
         return []
     total_samples = info['total_samples']
