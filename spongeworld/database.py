@@ -147,7 +147,7 @@ class DBData:
         '''
         pos = self.get_seq_pos(sequence)
         if pos is None:
-            return None
+            return 0
 
         num_observed = np.sum(self.data[pos, :] > threshold)
         debug(1, 'sequence observed in %d samples' % num_observed)

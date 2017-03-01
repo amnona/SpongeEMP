@@ -117,6 +117,10 @@ def get_sequence_info(db, sequence, fields=None, threshold=0, mincounts=4):
         debug(3, 'No sequences processed')
         return 'All sequences too short. minimal length is %d' % db.seq_length, None
 
+    if total_observed == 0:
+        debug(3, 'Sequence does not appear in database')
+        return '', {'total_samples': 0, 'total_observed': 0, 'info': {}}
+
     total_samples = db.get_total_samples() * len(newseqs)
     res = {}
     res['total_samples'] = total_samples
