@@ -1,9 +1,12 @@
-from io import TextIOWrapper
+from io import TextIOWrapper, BytesIO
+from collections import defaultdict
 import operator
+import urllib
 
 from flask import Blueprint, request, render_template, redirect, g
-
 import scipy.stats
+import matplotlib.pyplot as plt
+
 from .utils import debug, get_fasta_seqs
 from .spongeworld import get_sequence_info
 
@@ -82,6 +85,11 @@ def get_sequence_annotations(db, sequence, relpath='../'):
     if isinstance(sequence, str):
         webPage += 'Taxonomy: %s <br>' % db.get_taxonomy(sequence)
     webPage += '<br>'
+
+    # draw the pie chart
+    piechart_image = plot_pie_chart(info, 'host_common_name')
+    webPage += render_template('imageplace.html', wordcloudimage=urllib.parse.quote(piechart_image))
+
     for cdesc in desc:
         webPage += cdesc + '<br>'
     webPage += "</body>"
@@ -137,3 +145,61 @@ def get_annotation_string(info, pval=0.1):
     desc = [ckeep[0] for ckeep in keep]
     desc = ['Found in %f samples (%d / %d)' % (total_observed / total_samples, total_observed, total_samples)] + desc
     return desc
+
+
+def plot_pie_chart(info, field, relative=False, min_size=0):
+    '''Plot a pie chart for number of observations in each of the field values
+
+    Parameters
+    ----------
+    info :
+    info : dict (see get_sequence_annotations)
+        'total_samples' : int
+            the total amount of samples in the database
+        'total_observed' : int
+            the total number of samples where the sequence is present
+        'info' : dict of {field(str): information(dict)}
+            the frequency of the sequence in each field.
+            information is a dict of {value(str): distribution(dict)}
+            distribution contains the following key/values:
+                'total_samples': int
+                    the total number of samples having this value
+                'observed_samples': int
+                    the number of samples with this value which have the sequence present in them
+    field : str
+        The name of the field to plot the pie chart for
+    relative : bool (optional)
+        False (default) to plot absolute counts in pie chart.
+        True to plot relative abundances in pie chart
+    min_size : int (optional)
+        minimum number of observations of the otu in order to plot a separate slice. otherwise goes into 'Other'
+
+    Returns
+    -------
+    '''
+    nums = defaultdict[float]
+    cinfo = info['info'][field]
+    for cval, cvinfo in cinfo.items():
+        if cvinfo['observed_samples'] == 0:
+            continue
+        if relative:
+            cnum = 100 * cvinfo['observed_samples'] / cvinfo['total_samples']
+        else:
+            cnum = cvinfo['observed_samples']
+        if cnum < min_size:
+            cval = 'Other'
+        nums[cval] += cnum
+    x, labels = zip(*sorted(nums.items(), key=lambda x: x[1]))
+
+    fig = plt.figure()
+    a = plt.gca()
+    a.pie(x, labels=labels)
+    plt.axis("off")
+    fig.tight_layout()
+    figfile = BytesIO()
+    fig.savefig(figfile, format='png', bbox_inches='tight')
+    figfile.seek(0)  # rewind to beginning of file
+    import base64
+    figdata_png = base64.b64encode(figfile.getvalue())
+    figfile.close()
+    return figdata_png
