@@ -177,7 +177,7 @@ def plot_pie_chart(info, field, relative=False, min_size=0):
     Returns
     -------
     '''
-    nums = defaultdict[float]
+    nums = defaultdict(float)
     cinfo = info['info'][field]
     for cval, cvinfo in cinfo.items():
         if cvinfo['observed_samples'] == 0:
