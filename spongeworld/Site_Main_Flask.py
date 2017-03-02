@@ -93,6 +93,10 @@ def get_sequence_annotations(db, sequence, relpath='../'):
         taxonomy = 'Set of %d sequences' % len(sequence)
     webPage = render_template('seqinfo.html', sequence=seqname, taxonomy=taxonomy)
 
+    if isinstance(sequence, str):
+        webPage += '<a href="http://dbbact.org/sequence_annotations/%s" target="_blank">More info from dbBact</a>' % sequence
+        webPage += '<br>'
+
     total_observed = info['total_observed']
     total_samples = info['total_samples']
 
