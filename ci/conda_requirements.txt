@@ -9,3 +9,4 @@ pandas
 biom-format
 flask
 h5py
+matplotlib
