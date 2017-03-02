@@ -5,6 +5,7 @@ import urllib
 
 from flask import Blueprint, request, render_template, redirect, g
 import scipy.stats
+import numpy as np
 import matplotlib.pyplot as plt
 
 from .utils import debug, get_fasta_seqs
@@ -81,23 +82,71 @@ def get_sequence_annotations(db, sequence, relpath='../'):
     if err:
         return err, ''
     desc = get_annotation_string(info)
-    webPage = render_template('seqinfo.html', sequence=sequence)
     if isinstance(sequence, str):
-        webPage += 'Taxonomy: %s <br>' % db.get_taxonomy(sequence)
+        seqname = sequence
+        taxonomy = db.get_taxonomy(sequence)
+        # sometimes biom gives taxonomy as list and not string
+        if isinstance(taxonomy, list):
+            taxonomy = ';'.join(taxonomy)
+    else:
+        seqname = 'Set of %d sequences' % len(sequence)
+        taxonomy = 'Set of %d sequences' % len(sequence)
+    webPage = render_template('seqinfo.html', sequence=seqname, taxonomy=taxonomy)
+
+    total_observed = info['total_observed']
+    total_samples = info['total_samples']
+
+    webPage += 'Present in %f of samples (%d / %d)' % (total_observed/total_samples, total_observed, total_samples)
+    webPage += '<br>'
     webPage += '<br>'
 
-    # draw the pie chart
-    piechart_image = plot_pie_chart(info, 'host_common_name')
-    webPage += render_template('imageplace.html', wordcloudimage=urllib.parse.quote(piechart_image))
+    if total_observed == 0:
+        debug(2, 'sequence %s not found in database')
+        webPage += 'Sequence Not observed in database'
+        return '', webPage
 
+    int_fields = ['host_scientific_name', 'env_feature', 'country']
+    for idx, cfield in enumerate(int_fields):
+        # draw the pie chart
+        fdesc = get_annotation_string(info, field_name=cfield)
+        # open by default the first entry
+        if idx == 0:
+            webPage += '<details open="open">\n'
+        else:
+            webPage += '<details>\n'
+        webPage += '<summary>'
+        webPage += '%s (%d significant)' % (cfield, len(fdesc))
+        webPage += '</summary>\n'
+        webPage += '<pre>\n'
+        piechart_image = plot_pie_chart(info, cfield, min_size=0)
+        webPage += render_template('imageplace.html', wordcloudimage=urllib.parse.quote(piechart_image))
+        piechart_image_rel = plot_pie_chart(info, cfield, min_size=0, show_orig=True)
+        webPage += render_template('imageplace.html', wordcloudimage=urllib.parse.quote(piechart_image_rel))
+        webPage += '<br>'
+        webPage += 'Significant enrichment:<br>'
+        for cdesc in fdesc:
+            webPage += cdesc + '<br>'
+        webPage += '<br>'
+        webPage += '</pre>\n'
+        webPage += '</details>\n'
+
+    webPage += '<details>\n'
+    webPage += '<summary>'
+    webPage += 'ALL (%d significant)' % len(desc)
+    webPage += '</summary>\n'
+    webPage += '<pre>\n'
+    webPage += 'Significant enrichment:<br>'
     for cdesc in desc:
         webPage += cdesc + '<br>'
+    webPage += '<br>'
+    webPage += '</pre>\n'
+    webPage += '</details>\n'
     webPage += "</body>"
     webPage += "</html>"
     return '', webPage
 
 
-def get_annotation_string(info, pval=0.1):
+def get_annotation_string(info, pval=0.1, field_name=None):
     '''Get nice string summaries of annotations
 
     Parameters
@@ -115,6 +164,10 @@ def get_annotation_string(info, pval=0.1):
                     the total number of samples having this value
                 'observed_samples': int
                     the number of samples with this value which have the sequence present in them
+    pval : float
+    field_name : str or None
+        The field to get the statistics for
+        None (default) is for all fields
 
     Returns
     -------
@@ -128,7 +181,11 @@ def get_annotation_string(info, pval=0.1):
         return []
     total_samples = info['total_samples']
     null_pv = 1 - (total_observed / total_samples)
-    for cfield in info['info'].keys():
+    if field_name is None:
+        field_name = list(info['info'].keys())
+    else:
+        field_name = [field_name]
+    for cfield in field_name:
         for cval, cdist in info['info'][cfield].items():
             observed_val_samples = cdist['observed_samples']
             total_val_samples = cdist['total_samples']
@@ -143,11 +200,11 @@ def get_annotation_string(info, pval=0.1):
     keep = sorted(keep, key=operator.itemgetter(2), reverse=False)
     keep = sorted(keep, key=operator.itemgetter(1), reverse=True)
     desc = [ckeep[0] for ckeep in keep]
-    desc = ['Found in %f samples (%d / %d)' % (total_observed / total_samples, total_observed, total_samples)] + desc
+    # desc = ['Found in %f samples (%d / %d)' % (total_observed / total_samples, total_observed, total_samples)] + desc
     return desc
 
 
-def plot_pie_chart(info, field, relative=False, min_size=0):
+def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     '''Plot a pie chart for number of observations in each of the field values
 
     Parameters
@@ -171,6 +228,8 @@ def plot_pie_chart(info, field, relative=False, min_size=0):
     relative : bool (optional)
         False (default) to plot absolute counts in pie chart.
         True to plot relative abundances in pie chart
+    show_orig : bool (optional)
+        True to show number of original samples instead of number where it is present
     min_size : int (optional)
         minimum number of observations of the otu in order to plot a separate slice. otherwise goes into 'Other'
 
@@ -179,22 +238,40 @@ def plot_pie_chart(info, field, relative=False, min_size=0):
     '''
     nums = defaultdict(float)
     cinfo = info['info'][field]
+    nums['Other'] = 0
     for cval, cvinfo in cinfo.items():
-        if cvinfo['observed_samples'] == 0:
-            continue
-        if relative:
+        # if cvinfo['observed_samples'] == 0:
+        #     continue
+        if show_orig:
+            cnum = cvinfo['total_samples']
+        elif relative:
             cnum = 100 * cvinfo['observed_samples'] / cvinfo['total_samples']
         else:
             cnum = cvinfo['observed_samples']
         if cnum < min_size:
             cval = 'Other'
         nums[cval] += cnum
-    labels, x = zip(*sorted(nums.items(), key=lambda x: x[1]))
+    if show_orig:
+        nums['Other'] += info['total_samples'] - np.sum(list(nums.values()))
+    labels, x = zip(*sorted(nums.items(), key=lambda i: i[0], reverse=True))
+    allsum = np.sum(x)
+    x = list(x)
+    labels = list(labels)
+    for idx, cnum in enumerate(x):
+        x[idx] = cnum / allsum
+        if x[idx] < 0.01:
+            labels[idx] = ''
 
     fig = plt.figure()
     a = plt.gca()
     a.pie(x, labels=labels)
     plt.axis("off")
+    if show_orig:
+        plt.title('Sample number distribution', fontsize=20)
+    elif relative:
+        plt.title('Relative abundance', fontsize=20)
+    else:
+        plt.title('Absolute abundance', fontsize=20)
     fig.tight_layout()
     figfile = BytesIO()
     fig.savefig(figfile, format='png', bbox_inches='tight')
