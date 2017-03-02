@@ -20,12 +20,12 @@ class DatabaseTests(TestCase):
         err, info = get_sequence_info(db, self.goodseq, fields=None, threshold=0)
         self.assertEqual(err, '')
         desc = get_annotation_string(info)
-        self.assertEqual(desc, ['Found in 0.450000 samples (9 / 20)', 'group:2 (9/9)'])
+        self.assertEqual(desc, ['group:2 (9/9)'])
 
         err, info = get_sequence_info(db, self.badseq, fields=None, threshold=0)
         self.assertEqual(err, '')
         desc = get_annotation_string(info)
-        self.assertEqual(desc, ['Found in 0.500000 samples (10 / 20)'])
+        self.assertEqual(desc, [])
 
 
 if __name__ == '__main__':
