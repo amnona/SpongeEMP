@@ -189,7 +189,7 @@ def plot_pie_chart(info, field, relative=False, min_size=0):
         if cnum < min_size:
             cval = 'Other'
         nums[cval] += cnum
-    x, labels = zip(*sorted(nums.items(), key=lambda x: x[1]))
+    labels, x = zip(*sorted(nums.items(), key=lambda x: x[1]))
 
     fig = plt.figure()
     a = plt.gca()
