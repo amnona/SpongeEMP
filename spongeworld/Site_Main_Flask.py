@@ -238,7 +238,7 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     '''
     nums = defaultdict(float)
     cinfo = info['info'][field]
-    nums['Other'] = 0
+    nums['*Other'] = 0
     for cval, cvinfo in cinfo.items():
         # if cvinfo['observed_samples'] == 0:
         #     continue
@@ -249,10 +249,10 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
         else:
             cnum = cvinfo['observed_samples']
         if cnum < min_size:
-            cval = 'Other'
+            cval = '*Other'
         nums[cval] += cnum
     if show_orig:
-        nums['Other'] += info['total_samples'] - np.sum(list(nums.values()))
+        nums['*Other'] += info['total_samples'] - np.sum(list(nums.values()))
     labels, x = zip(*sorted(nums.items(), key=lambda i: i[0], reverse=True))
     allsum = np.sum(x)
     x = list(x)
