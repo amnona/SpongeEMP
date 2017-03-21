@@ -129,7 +129,7 @@ def get_sequence_annotations(db, sequence, relpath='../'):
         piechart_image_rel = plot_pie_chart(info, cfield, min_size=0, show_orig=True)
         webPage += render_template('imageplace.html', wordcloudimage=urllib.parse.quote(piechart_image_rel))
         webPage += '<br>'
-        webPage += 'Significant enrichment:<br>'
+        webPage += '<b>Significant enrichment:</b><br>'
         for cdesc in fdesc:
             webPage += cdesc + '<br>'
         webPage += '<br>'
