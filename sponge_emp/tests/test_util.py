@@ -1,9 +1,9 @@
 from unittest import main, TestCase
 import os.path
-from spongeworld.utils import get_data_path, getdoc, get_fasta_seqs
+from sponge_emp.utils import get_data_path, getdoc, get_fasta_seqs
 
 
-class SpongeworldTests(TestCase):
+class SpongeEMPTests(TestCase):
     def setUp(self):
         super().setUp()
 

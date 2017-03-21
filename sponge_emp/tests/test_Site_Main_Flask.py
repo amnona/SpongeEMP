@@ -1,9 +1,9 @@
 from unittest import main, TestCase
 
-from spongeworld.database import DBData
-from spongeworld.spongeworld import get_sequence_info
-from spongeworld.utils import get_data_path
-from spongeworld.Site_Main_Flask import get_annotation_string
+from sponge_emp.database import DBData
+from sponge_emp.sponge_emp import get_sequence_info
+from sponge_emp.utils import get_data_path
+from sponge_emp.Site_Main_Flask import get_annotation_string
 
 
 class DatabaseTests(TestCase):

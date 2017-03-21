@@ -1,11 +1,11 @@
 from unittest import main, TestCase
 
-from spongeworld.database import DBData
-from spongeworld.spongeworld import get_sequence_info
-from spongeworld.utils import get_data_path
+from sponge_emp.database import DBData
+from sponge_emp.sponge_emp import get_sequence_info
+from sponge_emp.utils import get_data_path
 
 
-class SpongeworldTests(TestCase):
+class SpongeEMPTests(TestCase):
     def setUp(self):
         super().setUp()
         self.db = DBData(biomfile=get_data_path('test1.biom'), mapfile=get_data_path('test1.map.txt'))

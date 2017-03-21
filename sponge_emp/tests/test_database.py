@@ -2,8 +2,8 @@ from unittest import main, TestCase
 
 import numpy as np
 
-from spongeworld.database import DBData
-from spongeworld.utils import get_data_path
+from sponge_emp.database import DBData
+from sponge_emp.utils import get_data_path
 
 
 class DatabaseTests(TestCase):

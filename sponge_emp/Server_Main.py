@@ -1,6 +1,6 @@
 from flask import Flask, g
 from .autodoc import auto
-from .spongeworld import Sponge_Flask_Obj
+from .sponge_emp import Sponge_Flask_Obj
 from .Site_Main_Flask import Site_Main_Flask_Obj
 from .database import DBData
 

@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from .utils import debug, get_fasta_seqs
-from .spongeworld import get_sequence_info
+from .sponge_emp import get_sequence_info
 
 Site_Main_Flask_Obj = Blueprint('Site_Main_Flask_Obj', __name__, template_folder='templates')
 
@@ -26,7 +26,7 @@ def landing_page():
 @Site_Main_Flask_Obj.route('/main', methods=['POST', 'GET'])
 def main_html():
     """
-    Title: the main SpongeWorld page and search tool
+    Title: the main SpongeEMP page and search tool
     URL: site/main_html
     Method: GET
     """
