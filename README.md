@@ -1,4 +1,4 @@
-# spongeworld
+# SpongeEMP
 ## Web + REST-API server for the SpongeEMP project.
 SpongeEMP is a comprehensive datatset of sea sponge microbiome samples, which is a part of the [Earth Microbiome Project](http://www.earthmicrobiome.org/). See [Manuscript submitted]().
 
@@ -30,7 +30,7 @@ pip install flask-autodoc
 pip install git+git://github.com/amnona/SpongeEMP
 ```
 
-## to run locally
+## Locally running a server
 - Activate the SpongeEMP environment:
 ```
 source activate SpongeEMP
