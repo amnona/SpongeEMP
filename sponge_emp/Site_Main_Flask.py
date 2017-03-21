@@ -6,6 +6,8 @@ import urllib
 from flask import Blueprint, request, render_template, redirect, g
 import scipy.stats
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from .utils import debug, get_fasta_seqs
