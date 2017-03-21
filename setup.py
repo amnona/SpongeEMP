@@ -20,15 +20,15 @@ classifiers = [
     'Operating System :: Microsoft :: Windows']
 
 
-description = 'SpongeWorld: a REST server for the sponge microbiome results'
+description = 'SpongeEMP: a Web + REST API server for the sea-sponge earth microbiome project results'
 
 with open('README.md') as f:
     long_description = f.read()
 
 keywords = 'microbiome database analysis bioinformatics',
 
-setup(name='spongeworld',
-      version=1,
+setup(name='sponge_emp',
+      version='1.0.0',
       license='BSD',
       description=description,
       long_description=long_description,
@@ -39,7 +39,7 @@ setup(name='spongeworld',
       url='na',
       test_suite='nose.collector',
       packages=find_packages(),
-      package_data={'spongeworld': ['spongeworld/data/*']},
+      package_data={'sponge_emp': ['sponge_emp/data/*']},
       install_requires=[
           'click >= 6',
           'numpy >= 1.11.0',
@@ -47,7 +47,7 @@ setup(name='spongeworld',
           'flask >= 0.12',
           'pandas >= 0.19',
           'biom-format >= 2.1',
-          'flask-autodoc'
+          'flask-autodoc',
       ],
       extras_require={'test': ["nose", "pep8", "flake8"],
                       'coverage': ["coverage"],
