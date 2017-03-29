@@ -58,7 +58,7 @@ def search_results():
             textfile = TextIOWrapper(file)
             seqs = get_fasta_seqs(textfile)
             if seqs is None:
-                return('Error: Uploaded file not recognized as fasta', 400)
+                return('Error: Uploaded file not recognized as fasta\nPlease use <a href=https://en.wikipedia.org/wiki/FASTA_format>fasta</a> formatted files without ";" comment lines', 400)
             err, webpage = get_sequence_annotations(db, seqs)
             if err:
                 return err, 400
