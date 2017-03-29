@@ -52,6 +52,7 @@ def sequence_info():
     with open(get_data_path('sequence_info_logfile.txt'), 'a+') as fl:
         sourceip = request.access_route[-1][:255]
         fl.write('%s\n' % sourceip)
+        debug(10,'testing')
 
     db = g.db
     alldat = request.get_json()
