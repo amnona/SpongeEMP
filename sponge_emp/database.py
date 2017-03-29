@@ -132,7 +132,7 @@ class DBData:
         debug(1, 'get seq pos for sequence %s' % sequence)
         if sequence in self.feature_metadata.index:
             return self.feature_metadata.index.get_loc(sequence)
-        debug(3, 'sequence %s not found' % sequence)
+        debug(1, 'sequence %s not found' % sequence)
         return None
 
     def get_total_observed(self, sequence, threshold=0):
