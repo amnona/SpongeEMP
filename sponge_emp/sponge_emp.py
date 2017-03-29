@@ -49,7 +49,7 @@ def sequence_info():
     debug(1, 'sequence info')
 
     # log the request ip so we can count :)
-    with open(get_data_path('sequence_info_logfile.txt'), 'a') as fl:
+    with open(get_data_path('sequence_info_logfile.txt'), 'a+') as fl:
         sourceip = request.access_route[-1][:255]
         fl.write('%s\n' % sourceip)
 
