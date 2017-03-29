@@ -128,7 +128,7 @@ def get_sequence_info(db, sequence, fields=None, threshold=0, mincounts=4):
     total_samples = db.get_total_samples() * len(newseqs)
 
     if total_observed == 0:
-        debug(3, 'Sequence does not appear in database')
+        debug(1, 'Sequence does not appear in database')
         return '', {'total_samples': total_samples, 'total_observed': 0, 'info': {}}
 
     res = {}
