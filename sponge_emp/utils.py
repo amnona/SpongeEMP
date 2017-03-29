@@ -89,32 +89,36 @@ def get_fasta_seqs(file):
         the sequences in the fasta file
     '''
     debug(1, 'reading fasta file')
-    if isinstance(file, str):
-        debug(1, 'opening file %s' % file)
-        file = open(file)
+    try:
+        if isinstance(file, str):
+            debug(1, 'opening file %s' % file)
+            file = open(file)
 
-    seqs = []
-    cseq = ''
-    isfasta = False
-    for cline in file:
-        cline = cline.strip()
-        if cline[0] == '>':
-            isfasta = True
-            if cseq:
-                seqs.append(cseq)
-            cseq = ''
-        else:
-            cseq += cline
-    # process the last sequence
-    if cseq:
-        seqs.append(cseq)
+        seqs = []
+        cseq = ''
+        isfasta = False
+        for cline in file:
+            cline = cline.strip()
+            if cline[0] == '>':
+                isfasta = True
+                if cseq:
+                    seqs.append(cseq)
+                cseq = ''
+            else:
+                cseq += cline
+        # process the last sequence
+        if cseq:
+            seqs.append(cseq)
 
-    file.close()
+        file.close()
 
-    # test if we encountered '>'
-    if not isfasta:
-        debug(2, 'not a fasta file')
+        # test if we encountered '>'
+        if not isfasta:
+            debug(2, 'not a fasta file')
+            return None
+
+        debug(1, 'read %d sequences' % len(seqs))
+        return seqs
+    except:
+        debug(3, 'fasta file read failed. error encountered')
         return None
-
-    debug(1, 'read %d sequences' % len(seqs))
-    return seqs
