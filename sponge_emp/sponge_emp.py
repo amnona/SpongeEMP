@@ -47,6 +47,12 @@ def sequence_info():
     Validation:
     '''
     debug(1, 'sequence info')
+
+    # log the request ip so we can count :)
+    with open('sequence_info_logfile.txt', 'a') as fl:
+        sourceip = request.access_route[-1][:255]
+        fl.write('%s\n' % sourceip)
+
     db = g.db
     alldat = request.get_json()
     if alldat is None:

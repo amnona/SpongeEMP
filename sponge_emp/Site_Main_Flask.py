@@ -59,25 +59,19 @@ def search_results():
             seqs = get_fasta_seqs(textfile)
             if seqs is None:
                 return('Error: Uploaded file not recognized as fasta', 400)
-            err, webpage = get_sequence_annotations(db, seqs, relpath='')
+            err, webpage = get_sequence_annotations(db, seqs)
             if err:
                 return err, 400
             return webpage
 
-    # if it is short, try if it is taxonomy
-        # err, webPage = get_taxonomy_info(sequence, relpath='')
-        # if not err:
-        #     return webPage
-        # return('term %s not found in ontology or taxonomy' % sequence, 400)
-
-    err, webPage = get_sequence_annotations(db, sequence, relpath='')
+    err, webPage = get_sequence_annotations(db, sequence)
     if err:
         return err, 400
     return webPage
 
 
 @Site_Main_Flask_Obj.route('/sequence_annotations/<string:sequence>')
-def get_sequence_annotations(db, sequence, relpath='../'):
+def get_sequence_annotations(db, sequence):
     '''Get annotations for a DNA sequence
     '''
     err, info = get_sequence_info(db, sequence, fields=None, threshold=0)
