@@ -1,3 +1,5 @@
+import time
+
 from flask import Blueprint, request, g
 import json
 from .utils import debug, getdoc, get_data_path
@@ -51,8 +53,7 @@ def sequence_info():
     # log the request ip so we can count :)
     with open(get_data_path('sequence_info_logfile.txt'), 'a+') as fl:
         sourceip = request.access_route[-1][:255]
-        fl.write('%s\n' % sourceip)
-        debug(10,'testing')
+        fl.write('%s - %s\n' % (time.strftime('%d/%m/%y %H:%M'), sourceip))
 
     db = g.db
     alldat = request.get_json()
