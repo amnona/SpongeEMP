@@ -20,7 +20,7 @@ class DatabaseTests(TestCase):
         err, info = get_sequence_info(db, self.goodseq, fields=None, threshold=0)
         self.assertEqual(err, '')
         desc = get_annotation_string(info)
-        self.assertEqual(desc, ['group:2 (9/9)'])
+        self.assertEqual(desc, ['group:2 (9/9) (p=0.000757)'])
 
         err, info = get_sequence_info(db, self.badseq, fields=None, threshold=0)
         self.assertEqual(err, '')

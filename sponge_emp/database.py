@@ -197,23 +197,42 @@ class DBData:
                     the total number of samples having this value
                 'observed_samples': int
                     the number of samples with this value which have the sequence present in them
+                'val_samples' : list of float
+                    the fraction of reads (of the sequence) in each sample which has the value
+                'not_val_samples' : list of float
+                    the fraction of reads (of the sequence) in each sample which does not have the value
         '''
         if isinstance(sequence, str):
             sequence = [sequence]
 
+        # presence/absence of at least one of the sequences in each sample
         allsum = np.zeros(self.data.shape[1])
+
+        # total frequency of the sequences in each sample
+        allfreq = np.zeros(self.data.shape[1])
+
         for csequence in sequence:
             pos = self.get_seq_pos(csequence)
             if pos is None:
                 continue
             present = self.data[pos, :] > threshold
             allsum[present.nonzero()[1]] += 1
+            allfreq += self.data[pos, :]
+        allfreq = allfreq.A[0]
 
+        # get the number of samples present per metadata value
         present_pos = allsum.nonzero()[0]
         counts = defaultdict(int)
         for cpos in present_pos:
             cvalue = self.sample_metadata[field].iloc[cpos]
             counts[cvalue] += allsum[cpos]
+
+        # get the total frequency of all sequences per metadata value
+        all_freq_per_val = defaultdict(float)
+        for cpos in range(self.data.shape[1]):
+            cvalue = self.sample_metadata[field].iloc[cpos]
+            all_freq_per_val[cvalue] += allfreq[cpos]
+
 
         info = {}
         for cvalue, ccount in counts.items():

@@ -21,7 +21,6 @@ def landing_page():
     '''
     Redirect to the main search page
     '''
-    # TODO: fix to non hard-coded
     return redirect('main')
 
 
@@ -71,6 +70,14 @@ def search_results():
 
 
 @Site_Main_Flask_Obj.route('/sequence_annotations/<string:sequence>')
+def sequence_annotations(sequence):
+        db = g.db
+        err,webPage = get_sequence_annotations(db, sequence)
+        if err:
+            return err
+        return webPage
+
+
 def get_sequence_annotations(db, sequence):
     '''Get annotations for a DNA sequence
     '''
@@ -141,12 +148,32 @@ def get_sequence_annotations(db, sequence):
     webPage += '<br>'
     webPage += '</pre>\n'
     webPage += '</details>\n'
+    webPage += '<a href="sequence_annotations_table/%s">View as table</a>' % sequence
     webPage += "</body>"
     webPage += "</html>"
     return '', webPage
 
 
-def get_annotation_string(info, pval=0.1, field_name=None):
+@Site_Main_Flask_Obj.route('/sequence_annotations_table/<string:sequence>')
+def get_sequence_annotations_table(sequence):
+    '''Get annotations for a DNA sequence as a tsv table
+    '''
+    db = g.db
+    err, info = get_sequence_info(db, sequence, fields=None, threshold=0)
+    if err:
+        return err, ''
+    desc = get_annotation_string(info, for_export=True)
+    webPage = '<html> <title>SpongeEMP results</title> <body>'
+    webPage = '<table><tr> <th>Category</th> <th>Value</th> <th>Observed</th> <th>Total</th> <th>p-val</th> </tr>'
+    # webPage = 'Category\tValue\tObserved\tTotal\tp-val\n'
+    for cdesc in desc:
+        webPage += cdesc
+    webPage += '</body>'
+    webPage += '</html>'
+    return webPage
+
+
+def get_annotation_string(info, pval=0.1, field_name=None, for_export=False):
     '''Get nice string summaries of annotations
 
     Parameters
@@ -168,6 +195,9 @@ def get_annotation_string(info, pval=0.1, field_name=None):
     field_name : str or None
         The field to get the statistics for
         None (default) is for all fields
+    for_export : bool (optional)
+        False (Default) to return user readble description (for webpage)
+        True to return tab delimited description string (for tsv export)
 
     Returns
     -------
@@ -192,7 +222,10 @@ def get_annotation_string(info, pval=0.1, field_name=None):
             cfrac = observed_val_samples / total_val_samples
             cpval = scipy.stats.binom.cdf(total_val_samples - observed_val_samples, total_val_samples, null_pv)
             if cpval <= pval:
-                cdesc = '%s:%s (%d/%d)' % (cfield, cval, observed_val_samples, total_val_samples)
+                if for_export:
+                    cdesc = '<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%f</td></tr>' % (cfield, cval, observed_val_samples, total_val_samples, cpval)
+                else:
+                    cdesc = '%s:%s (%d/%d) (p=%f)' % (cfield, cval, observed_val_samples, total_val_samples, cpval)
                 keep.append([cdesc, cfrac, cpval])
     debug(1, 'found %d significant annotations' % len(keep))
 
@@ -267,11 +300,11 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     a.pie(x, labels=labels)
     plt.axis("off")
     if show_orig:
-        plt.title('Sample number distribution', fontsize=20)
+        plt.title('Total sample number distribution', fontsize=20)
     elif relative:
-        plt.title('Relative abundance', fontsize=20)
+        plt.title('Fraction of samples present', fontsize=20)
     else:
-        plt.title('Absolute abundance', fontsize=20)
+        plt.title('Number of samples present', fontsize=20)
     fig.tight_layout()
     figfile = BytesIO()
     fig.savefig(figfile, format='png', bbox_inches='tight')
@@ -280,3 +313,37 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     figdata_png = base64.b64encode(figfile.getvalue())
     figfile.close()
     return figdata_png
+
+
+def get_significant_categories():
+    pass
+
+
+def get_tsv_summary(info, pval=0.1, field_name=None):
+    '''Get tsv file summarizing the results for a given sequence and field
+
+    Parameters
+    ----------
+    info : dict (see get_sequence_annotations)
+        'total_samples' : int
+            the total amount of samples in the database
+        'total_observed' : int
+            the total number of samples where the sequence is present
+        'info' : dict of {field(str): information(dict)}
+            the frequency of the sequence in each field.
+            information is a dict of {value(str): distribution(dict)}
+            distribution contains the following key/values:
+                'total_samples': int
+                    the total number of samples having this value
+                'observed_samples': int
+                    the number of samples with this value which have the sequence present in them
+    pval : float
+    field_name : str
+        The field to get the summary for
+
+    Returns
+    -------
+    desc : str
+        a tsv summary of the results for the field
+    '''
+    pass
