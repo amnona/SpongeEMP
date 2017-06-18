@@ -10,7 +10,8 @@ from .utils import debug
 
 
 class DBData:
-    def __init__(self, biomfile='data/final.withtax.biom', mapfile='data/map.txt', filepath=''):
+#    def __init__(self, biomfile='data/final.withtax.biom', mapfile='data/map.txt', filepath=''):
+    def __init__(self, biomfile='data/spongeemp.sub5k.biom', mapfile='data/map.txt', filepath=''):
         '''The database class used for data access
 
         Parameters
@@ -228,10 +229,10 @@ class DBData:
             counts[cvalue] += allsum[cpos]
 
         # get the total frequency of all sequences per metadata value
-        all_freq_per_val = defaultdict(float)
+        all_samples_per_val = defaultdict(list)
         for cpos in range(self.data.shape[1]):
             cvalue = self.sample_metadata[field].iloc[cpos]
-            all_freq_per_val[cvalue] += allfreq[cpos]
+            all_samples_per_val[cvalue].append(cpos)
 
 
         info = {}
@@ -241,5 +242,7 @@ class DBData:
             cinfo = {}
             cinfo['observed_samples'] = int(ccount)
             cinfo['total_samples'] = int(self.get_value_samples(field, cvalue)) * len(sequence)
+            cinfo['val_samples'] = allfreq[all_samples_per_val[cvalue]]
+            cinfo['not_val_samples'] = allfreq[np.setdiff1d(np.arange(len(allfreq)),all_samples_per_val[cvalue])]
             info[str(cvalue)] = cinfo
         return info

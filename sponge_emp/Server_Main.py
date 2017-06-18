@@ -17,7 +17,8 @@ SetDebugLevel(2)
 
 # init the global database structure
 debug(6, 'loading database...')
-dbdata = DBData(biomfile='data/final.withtax.biom', mapfile='data/map.txt', filepath=app.root_path)
+# dbdata = DBData(biomfile='data/final.withtax.biom', mapfile='data/map.txt', filepath=app.root_path)
+dbdata = DBData(biomfile='data/spongeemp.sub5k.biom', mapfile='data/map.txt', filepath=app.root_path)
 dbdata.import_data()
 debug(6, 'starting server')
 

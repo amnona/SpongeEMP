@@ -164,7 +164,7 @@ def get_sequence_annotations_table(sequence):
         return err, ''
     desc = get_annotation_string(info, for_export=True)
     webPage = '<html> <title>SpongeEMP results</title> <body>'
-    webPage = '<table><tr> <th>Category</th> <th>Value</th> <th>Observed</th> <th>Total</th> <th>p-val</th> </tr>'
+    webPage = '<table><tr> <th>Category</th> <th>Value</th> <th>Observed</th> <th>Total</th> <th>binomial_p-val</th> <th>ranksum_p-val</th> </tr>'
     # webPage = 'Category\tValue\tObserved\tTotal\tp-val\n'
     for cdesc in desc:
         webPage += cdesc
@@ -221,12 +221,21 @@ def get_annotation_string(info, pval=0.1, field_name=None, for_export=False):
             total_val_samples = cdist['total_samples']
             cfrac = observed_val_samples / total_val_samples
             cpval = scipy.stats.binom.cdf(total_val_samples - observed_val_samples, total_val_samples, null_pv)
-            if cpval <= pval:
+            # rstat,rpval = scipy.stats.mannwhitneyu(cdist['val_samples'],cdist['not_val_samples'])
+            allv = scipy.stats.rankdata(np.hstack([cdist['val_samples'],cdist['not_val_samples']]))
+            v1 = np.mean(allv[:len(cdist['val_samples'])])
+            v2 = np.mean(allv[len(cdist['val_samples']):])
+            if v1 - v2 > 0:
+                rstat,rpval = scipy.stats.kruskal(cdist['val_samples'],cdist['not_val_samples'])
+            else:
+                rpval = 1
+            if (cpval <= pval) or (rpval <= pval):
                 if for_export:
-                    cdesc = '<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%f</td></tr>' % (cfield, cval, observed_val_samples, total_val_samples, cpval)
+                    cdesc = '<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%f</td>%f</td></tr>' % (cfield, cval, observed_val_samples, total_val_samples, cpval, rpval)
                 else:
-                    cdesc = '%s:%s (%d/%d) (p=%f)' % (cfield, cval, observed_val_samples, total_val_samples, cpval)
+                    cdesc = '%s:%s (%d/%d) (binomial_p=%f, ranksum_p=%f)' % (cfield, cval, observed_val_samples, total_val_samples, cpval, rpval)
                 keep.append([cdesc, cfrac, cpval])
+
     debug(1, 'found %d significant annotations' % len(keep))
 
     # sort first by p-value and then by fraction (so fraction is more important)
