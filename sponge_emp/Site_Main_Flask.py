@@ -231,7 +231,7 @@ def get_annotation_string(info, pval=0.1, field_name=None, for_export=False):
                 rpval = 1
             if (cpval <= pval) or (rpval <= pval):
                 if for_export:
-                    cdesc = '<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%f</td>%f</td></tr>' % (cfield, cval, observed_val_samples, total_val_samples, cpval, rpval)
+                    cdesc = '<tr><td>%s</td><td>%s</td><td>%d</td><td>%d</td><td>%f</td><td>%f</td></tr>' % (cfield, cval, observed_val_samples, total_val_samples, cpval, rpval)
                 else:
                     cdesc = '%s:%s (%d/%d) (binomial_p=%f, ranksum_p=%f)' % (cfield, cval, observed_val_samples, total_val_samples, cpval, rpval)
                 keep.append([cdesc, cfrac, cpval])
