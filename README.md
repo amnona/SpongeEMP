@@ -47,6 +47,13 @@ flask run
 ```
 - Open the web-browser to: 127.0.0.1:5000/main
 
+## Data files
+The repository contains two biom tables used by the SpongeEMP server (both located in sponge_emp/data/):
+
+- final.withtax.biom : a [deblurred](http://msystems.asm.org/content/2/2/e00191-16?utm_source=TrendMDmSystems&utm_medium=TrendMDmSystems&utm_campaign=trendmdalljournals_0) biom table of all the SpongeEMP samples. Taxonomy has been added using the qiime [assign_taxonomy.py](http://qiime.org/scripts/assign_taxonomy.html) using RDP and GreenGenes.
+
+- spongeemp.sub5k.biom : similar to final.withtax.biom, but rarified to 5000 reads/sample. This is what is used by the SpongeEMP server.
+
 ## Citation
 Please cite [Submitted](submitted) when using results from this server.
 
