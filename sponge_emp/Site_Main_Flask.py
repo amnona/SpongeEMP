@@ -318,7 +318,7 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
 
     fig = plt.figure()
     a = plt.gca()
-    if len(x)>0:
+    if allsum > 0:
         a.pie(x, labels=labels)
     else:
         print('** not found in enough samples')
