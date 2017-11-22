@@ -205,7 +205,6 @@ class DBData:
         '''
         if isinstance(sequence, str):
             sequence = [sequence]
-        print('* get info for field %s, %d sequences' % (field,len(sequence)))
 
         # presence/absence of at least one of the sequences in each sample
         allsum = np.zeros(self.data.shape[1])
@@ -240,7 +239,6 @@ class DBData:
         print('* found %d values' % len(counts))
         for cvalue, ccount in counts.items():
             if ccount < mincounts:
-                print('%s too small (%d). continued' % (cvalue,ccount))
                 continue
             cinfo = {}
             cinfo['observed_samples'] = int(ccount)
@@ -248,5 +246,4 @@ class DBData:
             cinfo['val_samples'] = allfreq[all_samples_per_val[cvalue]]
             cinfo['not_val_samples'] = allfreq[np.setdiff1d(np.arange(len(allfreq)),all_samples_per_val[cvalue])]
             info[str(cvalue)] = cinfo
-            print('%s (%d) added' % (cvalue,ccount))
         return info
