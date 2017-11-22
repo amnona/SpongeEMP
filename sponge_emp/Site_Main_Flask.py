@@ -277,6 +277,7 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
 
     Returns
     -------
+    encoding of png image
     '''
     nums = defaultdict(float)
     cinfo = info['info'][field]
@@ -306,7 +307,10 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
 
     fig = plt.figure()
     a = plt.gca()
-    a.pie(x, labels=labels)
+    if allsum > 0:
+        a.pie(x, labels=labels)
+    else:
+        a.text(0,0.5,'Not found in enough samples.\nCannot generate statistics')
     plt.axis("off")
     if show_orig:
         plt.title('Total sample number distribution', fontsize=20)

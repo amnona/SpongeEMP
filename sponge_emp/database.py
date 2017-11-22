@@ -236,6 +236,7 @@ class DBData:
 
 
         info = {}
+        print('* found %d values' % len(counts))
         for cvalue, ccount in counts.items():
             if ccount < mincounts:
                 continue
