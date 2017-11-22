@@ -296,8 +296,15 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     if show_orig:
         nums['~Other'] += info['total_samples'] - np.sum(list(nums.values()))
     labels, x = zip(*sorted(nums.items(), key=lambda i: i[0], reverse=True))
+    print('DEBUG:')
+    print('* labeles')
+    print(labels)
+    print('* X')
+    print(x)
     allsum = np.sum(x)
     x = list(x)
+    print('* allsum')
+    print(allsum)
     labels = list(labels)
     for idx, cnum in enumerate(x):
         x[idx] = cnum / allsum
