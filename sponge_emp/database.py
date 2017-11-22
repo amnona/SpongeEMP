@@ -205,6 +205,7 @@ class DBData:
         '''
         if isinstance(sequence, str):
             sequence = [sequence]
+        print('* get info for field %s, %d sequences' % (field,len(sequence)))
 
         # presence/absence of at least one of the sequences in each sample
         allsum = np.zeros(self.data.shape[1])
@@ -236,6 +237,7 @@ class DBData:
 
 
         info = {}
+        print('* found %d values' % len(counts))
         for cvalue, ccount in counts.items():
             if ccount < mincounts:
                 continue
