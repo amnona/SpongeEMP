@@ -321,6 +321,7 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     if len(x)>0:
         a.pie(x, labels=labels)
     else:
+        print('** not found in enough samples')
         a.text(0,0,'Not found in enough samples.')
     plt.axis("off")
     if show_orig:
