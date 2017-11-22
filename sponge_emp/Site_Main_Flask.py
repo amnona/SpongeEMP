@@ -297,19 +297,8 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     if show_orig:
         nums['~Other'] += info['total_samples'] - np.sum(list(nums.values()))
     labels, x = zip(*sorted(nums.items(), key=lambda i: i[0], reverse=True))
-    print('DEBUG:')
-    print('* field')
-    print(field)
-    print('* cinfo')
-    print(cinfo)
-    print('* labeles')
-    print(labels)
-    print('* X')
-    print(x)
     allsum = np.sum(x)
     x = list(x)
-    print('* allsum')
-    print(allsum)
     labels = list(labels)
     for idx, cnum in enumerate(x):
         x[idx] = cnum / allsum
@@ -321,8 +310,7 @@ def plot_pie_chart(info, field, relative=False, show_orig=False, min_size=0):
     if allsum > 0:
         a.pie(x, labels=labels)
     else:
-        print('** not found in enough samples')
-        a.text(0,0,'Not found in enough samples.')
+        a.text(0,0.5,'Not found in enough samples.\nCannot generate statistics')
     plt.axis("off")
     if show_orig:
         plt.title('Total sample number distribution', fontsize=20)
