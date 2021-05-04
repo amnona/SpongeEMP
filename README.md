@@ -1,6 +1,6 @@
 # SpongeEMP
 ## Web + REST-API server for the SpongeEMP project.
-SpongeEMP is a comprehensive datatset of sea sponge microbiome samples, which is a part of the [Earth Microbiome Project](http://www.earthmicrobiome.org/). See [Manuscript submitted]().
+SpongeEMP is a comprehensive datatset of sea sponge microbiome samples, which is a part of the [Earth Microbiome Project](http://www.earthmicrobiome.org/). See [Paper](https://academic.oup.com/gigascience/article/6/10/gix077/4082886?login=true).
 
 The server enables retrieving statistics regarding a given 16S V4 sequence (or set of sequences), identifying significant sponge taxa / geographic locations and sample types where this sequences is enriched in the SpongeEMP dataset.
 
